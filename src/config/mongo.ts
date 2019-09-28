@@ -1,11 +1,11 @@
 import { MongoClient, Db } from 'mongodb';
 import fs from 'fs';
 
-type Client = { db: Db, close: Function }
+export type CustomMongoClient = { db: Db, close: Function }
 
 const mongoPass: string = fs.readFileSync('../mlabMongoPass', { encoding: 'utf-8' });
 const uri = `mongodb+srv://maxim:${encodeURIComponent(mongoPass)}@cluster0-d5zyk.mongodb.net/test?retryWrites=true&w=majority`;
-const client: Promise<Client> = new MongoClient(
+const client: Promise<CustomMongoClient> = new MongoClient(
     uri,
     {
         useNewUrlParser: true,
@@ -19,4 +19,4 @@ const client: Promise<Client> = new MongoClient(
     }))
     .catch(reason => reason);
 
-export { client, Client };
+export { client };

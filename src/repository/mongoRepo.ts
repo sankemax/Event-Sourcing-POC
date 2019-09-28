@@ -1,8 +1,9 @@
-import { client, Client } from '../config/mongo';
-import { EventsEnum } from '../config/events';
+import { v4 as uuid } from 'uuid';
 import { ObjectID } from 'bson';
+import { client, CustomMongoClient } from '../config/mongo';
+import { EventsEnum } from '../config/events';
 
-let mongo: Client;
+let mongo: CustomMongoClient;
 
 async function appendEvent(eventType: EventsEnum, event: object): Promise<ObjectID> {
     try {
@@ -11,7 +12,8 @@ async function appendEvent(eventType: EventsEnum, event: object): Promise<Object
             .collection(eventType)
             .insertOne({
                 ...event,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                version: uuid()
             })
         ).insertedId
 
@@ -40,7 +42,7 @@ async function initClient() {
     }
 }
 
-function closeConnection(): Client {
+function closeConnection(): CustomMongoClient {
     if (mongo) {
         mongo.close();
     }

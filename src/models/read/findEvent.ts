@@ -1,5 +1,5 @@
-import { findEvents } from '../repository/mongoRepo';
-import { EventsEnum } from '../config/events';
+import { findEvents } from '../../repository/mongoRepo';
+import { EventsEnum } from '../../config/events';
 
 async function readEvent(eventType: EventsEnum, id: any, fromDate?: Date): Promise<any[]> {
     // TODO schema validation

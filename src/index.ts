@@ -1,7 +1,7 @@
-import { writeEvent } from './write_models/writeEvent';
+import { writeEvent } from './models/write/writeEvent';
 import { EventsEnum } from './config/events'
 import { closeConnection } from './repository/mongoRepo';
-import { readEvent } from './read_models/findEvent';
+import { readEvent } from './models/read/findEvent';
 
 async function check() {
     try {

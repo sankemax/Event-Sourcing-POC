@@ -1,9 +1,13 @@
 import { findEvents } from '../../repository/mongoRepo';
-import { EventsEnum } from '../../config/events';
+import { Event, EventType, FindEventOptions } from '../../config/events';
 
-async function readEvent(eventType: EventsEnum, id: number, fromDate?: Date): Promise<any[]> {
+async function readEvent(
+    id: number,
+    eventType: EventType,
+    options?: FindEventOptions
+): Promise<any[]> {
     // TODO schema validation
-    const eventSource = await findEvents(eventType, id, fromDate);
+    const eventSource = await findEvents(eventType, id, options);
     return eventSource.reduceRight((final, cur) => ({ ...final, ...cur }), {});
 }
 

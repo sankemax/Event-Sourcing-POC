@@ -12,6 +12,7 @@
     "removeComments": true,
     "isolatedModules": true,
     "strict": true,
+    "strictNullChecks": true,
     "noEmitOnError": true,
     "noImplicitAny": true,
     "alwaysStrict": true,

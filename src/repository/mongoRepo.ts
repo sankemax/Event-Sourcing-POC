@@ -1,15 +1,15 @@
 import { v4 as uuid } from 'uuid';
 import { ObjectID } from 'bson';
 import { client, CustomMongoClient } from '../config/mongo';
-import { EventsEnum } from '../config/events';
+import { EventType, FindEventOptions } from '../config/events';
 
 let mongo: CustomMongoClient;
 
-async function appendEvent(eventType: EventsEnum, event: object): Promise<ObjectID> {
+async function appendEvent(eventType: EventType, event: object): Promise<ObjectID> {
     try {
         await initClient();
         return (await mongo.db
-            .collection(eventType)
+            .collection(EventType.asString(eventType))
             .insertOne({
                 ...event,
                 timestamp: Date.now(),
@@ -22,13 +22,16 @@ async function appendEvent(eventType: EventsEnum, event: object): Promise<Object
     }
 }
 
-async function findEvents(eventType: EventsEnum, id: any, from?: Date): Promise<any[]> {
+async function findEvents(eventType: EventType, id: any, options: FindEventOptions = {}): Promise<any[]> {
     try {
+        // TODO implement all searches
+        const { fromDate, afterVersion, withConnections } = options;
+
         await initClient();
         // TODO respond with cursor so I will be able to play with the results
         return await mongo.db
-            .collection(eventType)
-            .find({ id, ...(from ? { timestamp: { $gte: from } } : {} )})
+            .collection(EventType.asString(eventType))
+            .find({ id, ...(fromDate ? { timestamp: { $gte: fromDate } } : {} )})
             .sort({ timestamp: -1 })
             .toArray();
     } catch (error) {

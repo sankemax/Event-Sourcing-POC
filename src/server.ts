@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { json, urlencoded } from 'body-parser';
 import { apiRouter } from './router/api'
-import { closeConnection } from './repository/eventRepo';
+import { closeConnection } from './util/repoUtil';
 
 const server = express();
 const port = process.env.PORT || 3001;

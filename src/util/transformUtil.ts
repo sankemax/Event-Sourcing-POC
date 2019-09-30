@@ -1,4 +1,4 @@
-import { tryCatch, identity } from 'ramda';
+import { tryCatch, concat } from 'ramda';
 
 function parseJsonIfValid(candidate: any): any {
     if (candidate == null) {
@@ -7,4 +7,17 @@ function parseJsonIfValid(candidate: any): any {
     return tryCatch(JSON.parse, () => candidate)(candidate);
 }
 
-export { parseJsonIfValid };
+function mergeFn(left: any, right: any) {
+    switch (true) {
+        case Array.isArray(left) && Array.isArray(right):
+            return concat(left, right);
+        case Array.isArray(left):
+            return [...left, right];
+        case Array.isArray(right):
+            return [left, ...right];
+        default:
+            return [left, right];
+    }
+}
+
+export { parseJsonIfValid, mergeFn, };

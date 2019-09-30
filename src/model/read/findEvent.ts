@@ -1,18 +1,12 @@
-import { mergeDeepWith, mergeDeepRight, concat } from 'ramda';
+import { mergeDeepWith, mergeDeepRight, } from 'ramda';
 import { Cursor } from 'mongodb';
-import { findEvents } from '../../repository/eventRepo';
-import { parseJsonIfValid } from '../../util/transformUtil';
+import { parseJsonIfValid, mergeFn } from '../../util/transformUtil';
+import { findEvents } from '../../repository/read/readRepo';
 import {
     EventName,
     FindEventOptions,
     Event
-} from '../../config/events';
-
-const operationStrategy = {
-    'APPEND': (pastEventData: object, data: object) => mergeDeepWith(mergeFn, pastEventData, data),
-    'PATCH': (pastEventData: object, data: object) => mergeDeepRight(pastEventData, data),
-    'REMOVE': () => { }, // TODO remove
-}
+} from '../event';
 
 async function readEvent<E extends Event>(
     iterationId: number,
@@ -38,7 +32,7 @@ async function handleEventCursor<E extends Event>(
                 progression = [event];
                 continue;
             }
-            progression = [...progression, aggregate ? handleEvent(event, progression) : event];
+            progression = [...progression, aggregate ? handleAggregate(event, progression) : event];
         }
         return progression;
     } finally {
@@ -46,7 +40,7 @@ async function handleEventCursor<E extends Event>(
     }
 }
 
-function handleEvent<T extends Event>(event: T, progression: T[]): T {
+function handleAggregate<T extends Event>(event: T, progression: T[]): T {
     const mergeStrategy = operationStrategy[event.operation || 'APPEND'];
     const pastEvent = progression[progression.length - 1];
     const pastEventData = pastEvent.data;
@@ -65,17 +59,10 @@ function handleEvent<T extends Event>(event: T, progression: T[]): T {
     return { ...info, data: mergeStrategy(parsedPastData, parsedData) } as T;
 }
 
-function mergeFn(left: any, right: any) {
-    switch (true) {
-        case Array.isArray(left) && Array.isArray(right):
-            return concat(left, right);
-        case Array.isArray(left):
-            return [...left, right];
-        case Array.isArray(right):
-            return [left, ...right];
-        default:
-            return [left, right];
-    }
+const operationStrategy = {
+    'APPEND': (pastEventData: object, data: object) => mergeDeepWith(mergeFn, pastEventData, data),
+    'PATCH': (pastEventData: object, data: object) => mergeDeepRight(pastEventData, data),
+    'REMOVE': () => { }, // TODO remove
 }
 
 export { readEvent };

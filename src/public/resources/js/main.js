@@ -1,16 +1,10 @@
-function fetchEvent(eventName, iterationId, aggregate) {
-    return fetch('/api/event', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-            iterationId,
-            eventName,
-            aggregate
-        })
-    });
+window.onload = function () {
+    document
+        .getElementsByClassName('search_events')[0]
+        .addEventListener('click', onClickReadEvent)
 }
 
-async function onClickEvent() {
+async function onClickReadEvent() {
     const resultDiv = document.getElementsByClassName('results')[0];
 
     const iterationId = document.getElementsByClassName('iteration_id')[0].value;
@@ -26,8 +20,14 @@ async function onClickEvent() {
     resultDiv.innerHTML = html;
 }
 
-window.onload = function () {
-    document
-        .getElementsByClassName('search_events')[0]
-        .addEventListener('click', onClickEvent)
+function fetchEvent(eventName, iterationId, aggregate) {
+    return fetch('/api/read', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+            iterationId,
+            eventName,
+            aggregate
+        })
+    });
 }

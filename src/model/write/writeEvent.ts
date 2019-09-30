@@ -1,6 +1,6 @@
 import { ObjectID, } from 'mongodb';
-import { EventName } from '../../config/events';
-import { appendEvent } from '../../repository/eventRepo';
+import { EventName } from '../event';
+import { appendEvent } from '../../repository/write/writeRepo';
 
 async function writeEvent(eventType: EventName, event: object): Promise<ObjectID> {
     // TODO schema validation

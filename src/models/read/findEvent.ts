@@ -1,6 +1,7 @@
-import { Cursor } from 'mongodb';
 import { mergeDeepWith, mergeDeepRight, concat } from 'ramda';
+import { Cursor } from 'mongodb';
 import { findEvents } from '../../repository/eventRepo';
+import { parseJsonIfValid } from '../../util/transformUtil';
 import {
     EventName,
     FindEventOptions,
@@ -46,17 +47,22 @@ async function handleEventCursor<E extends Event>(
 }
 
 function handleEvent<T extends Event>(event: T, progression: T[]): T {
-    const mergeStrategy = operationStrategy[event.operation || 'PATCH'];
+    const mergeStrategy = operationStrategy[event.operation || 'APPEND'];
     const pastEvent = progression[progression.length - 1];
     const pastEventData = pastEvent.data;
     const { data, ...info } = event;
     if (!data) {
-        return { ...info, ...{ data: pastEventData } } as T;
+        return { ...info, data: pastEventData } as T;
     }
     if (!pastEventData) {
         return event;
     }
-    return { ...info, ...{ data: { ...mergeStrategy(pastEvent.data, data) } } } as T;
+    const parsedPastData = parseJsonIfValid(pastEvent.data);
+    const parsedData = parseJsonIfValid(data);
+    if (typeof parsedData != 'object' || typeof parsedPastData != 'object') {
+        return { ...info, data: [ parsedPastData, parsedData ] } as T;
+    }
+    return { ...info, data: mergeStrategy(parsedPastData, parsedData) } as T;
 }
 
 function mergeFn(left: any, right: any) {

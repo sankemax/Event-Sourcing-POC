@@ -1,23 +1,30 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { json, urlencoded } from 'body-parser';
-import { apiRouter } from './router/api'
+import { apiRouter } from './routes/api'
 import { closeConnection } from './util/repoUtil';
+import { mapObject, escapeEntry } from './util/transformUtil';
 
 const server = express();
 const port = process.env.PORT || 3001;
-
-const errorHandler = async (error: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(error);
-    res.status(500).json({ success: false, message: error.message });
-}
 
 server
     .use(json())
     .use(urlencoded({ extended: true }))
     .use('/', express.static(`${__dirname}/public`))
-    .use('/api', apiRouter)
+    .use('/api', [escapeStringsInBody, apiRouter])
     .use(errorHandler)
 
 server
     .listen(port, () => console.log(`listening on port ${port}`))
     .on('close', closeConnection)
+
+function escapeStringsInBody(req: Request, res: Response, next: NextFunction) {
+    const escapeFn = escapeEntry(req.body);
+    req.body = mapObject(req.body, escapeFn);
+    next();
+}
+
+async function errorHandler(error: any, req: Request, res: Response, next: NextFunction) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+}

@@ -17,24 +17,24 @@ export interface FindEventOptions {
 export interface Event {
     eventName: EventName,
     operation: Operation,
+    iterationId: number,
     data: any,
-    iterationId?: number,
-    status?: string,
-    connections?: SomeEvent[],
-    timestamp?: number,
+    timestamp: number,
+    status: string,
     version?: string
 }
 
 export interface PersonEvent extends Event {
     eventName: 'person_event',
-    status: 'unidentified' | 'fuzzy' | 'found'
-    connections: [SearchEvent],
+    status: 'no_core_id' | 'core_id'
 }
 
 export interface SearchEvent extends Event {
     eventName: 'search_event',
-    status: 'started' | 'stuck' | 'finished:results' | 'finished:no-results'
-    connections: [PersonEvent]
+    status: 'started' |
+        'stuck' |
+        'result' |
+        'finished'
 }
 
 export type SomeEvent =

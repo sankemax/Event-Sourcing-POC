@@ -4,9 +4,9 @@
   "description": "",
   "scripts": {
     "clearDist": "node scripts/clearDist.js",
-    "build": "npm run clearDist && tsc && copyfiles -u 1 **/*.html dist",
+    "build": "npm run clearDist && tsc && copyfiles -u 1 ./src/**/*.html dist",
     "dev": "node --inspect=5858 -r ts-node/register ./src/server.ts ./src/public",
-    "dev:watch": "nodemon --delay 2.5 -e ts,js,html",
+    "dev:watch": "nodemon --delay 5 -e ts,js,html",
     "prod": "npm run build && node dist/server.js"
   },
   "nodemonConfig": {

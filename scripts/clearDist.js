@@ -12,8 +12,6 @@ function deleteFolderRecursive(path = `${__dirname}/../dist`) {
                 }
             });
         fs.rmdirSync(path);
-    } else {
-        console.log(`no dist`);
     }
 }
 

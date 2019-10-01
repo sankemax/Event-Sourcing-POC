@@ -5,10 +5,10 @@
     "module": "commonjs",
     "lib": ["esnext"],
     "allowJs": true,
-    // "sourceMap": true,
+    "sourceMap": true,
     "outDir": "dist",
-    // "rootDir": "src",
-    // "removeComments": true,
+    "rootDir": "src",
+    "removeComments": true,
     "isolatedModules": true,
     "strict": true,
     "strictNullChecks": true,
@@ -22,11 +22,10 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "src/**/*.ts"
-  ],
   "exclude": [
+    "scripts",
     "node_modules",
-    ".vscode"
+    ".vscode",
+    "dist"
   ]
 }

@@ -15,6 +15,9 @@ const client: Promise<CustomMongoClient> = new MongoClient(
         db: mongo.db('event_store'),
         close: () => mongo.isConnected() ? mongo.close(true) : void 0
     }))
-    .catch(reason => reason);
+    .catch(reason => {
+        console.error(reason);
+        process.exit();
+    }) as Promise<CustomMongoClient>;
 
 export { client, };

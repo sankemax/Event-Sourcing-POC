@@ -1,7 +1,7 @@
 import { mergeDeepWith, mergeDeepRight, } from 'ramda';
 import { Cursor } from 'mongodb';
 import { parseJsonIfValid, mergeFn } from '../../util/transformUtil';
-import { findEvents } from '../../repository/read/readRepo';
+import { mongoRead } from '../../repository/read/readRepo';
 import {
     EventName,
     FindEventOptions,
@@ -13,8 +13,8 @@ async function readEvent<E extends Event>(
     eventName: EventName,
     options: FindEventOptions = { aggregate: false }
 ): Promise<E[]> {
-    // TODO schema validation
-    const cursor = await findEvents(eventName, iterationId, options);
+    // TODO: schema validation
+    const cursor = await mongoRead.findEvents(eventName, iterationId, options) as Cursor<E>;
     const progression = await handleEventCursor(cursor, options);
     return progression as E[];
 }
@@ -62,7 +62,7 @@ function handleAggregate<T extends Event>(event: T, progression: T[]): T {
 const operationStrategy = {
     'APPEND': (pastEventData: object, data: object) => mergeDeepWith(mergeFn, pastEventData, data),
     'PATCH': (pastEventData: object, data: object) => mergeDeepRight(pastEventData, data),
-    'REMOVE': () => { }, // TODO remove
+    'REMOVE': () => { }, // TODO: remove
 }
 
 export { readEvent };

@@ -7,25 +7,20 @@ function parseJsonIfValid(candidate: any): any {
     return tryCatch(JSON.parse, () => candidate)(candidate);
 }
 
-function mapObject(
-    obj: object,
-    mapFn: (x: [string, unknown]) => [string, unknown]
-): object {
-    return Object
+function mapObject(mapFn: any) {
+    return (obj: object) => Object
         .entries(obj)
         .map(mapFn)
         .reduce(
-            (obj: any, ent: [string, unknown]) => ({ ...obj, ...{ [ent[0]]: ent[1] } }),
+            (obj: any, ent: any) => ({ ...obj, ...{ [ent[0]]: ent[1] } }),
             Object.create(null)
         );
 }
 
-function escapeEntry(obj: any) {
-    return (entry: [string, unknown]): [string, unknown] =>
-        Object.prototype.hasOwnProperty.call(obj, entry[0])
-            && typeof entry[1] == 'string'
-            ? [entry[0], escape(entry[1])]
-            : entry;
+function escapeEntry(entry: [string, any]): [string, any] {
+    return entry[1] == 'string'
+        ? [entry[0], escape(entry[1])]
+        : entry;
 }
 
 function mergeFn(left: any, right: any) {

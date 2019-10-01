@@ -19,8 +19,7 @@ server
     .on('close', closeConnection)
 
 function escapeStringsInBody(req: Request, res: Response, next: NextFunction) {
-    const escapeFn = escapeEntry(req.body);
-    req.body = mapObject(req.body, escapeFn);
+    req.body = mapObject(escapeEntry)(req.body)
     next();
 }
 

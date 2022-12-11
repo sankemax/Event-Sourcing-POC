@@ -39,7 +39,7 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "mongodb": "^3.3.2",
     "ramda": "^0.26.1",
     "uuid": "^3.3.3"
